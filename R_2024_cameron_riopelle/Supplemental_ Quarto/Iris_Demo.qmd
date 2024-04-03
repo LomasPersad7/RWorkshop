@@ -1,0 +1,78 @@
+---
+title: "Iris in Quarto"
+author: "Cameron Riopelle, PhD"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto is the next generation of RMarkdown and has a visual editor and the ability to use multiple languages. See <https://quarto.org/docs/get-started/hello/rstudio.html> for an overview and <https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf> for an RMarkdown cheatsheet. Quarto can be used in Python, R, Julia, and matplotlib, among other programs.
+
+## Iris Data
+
+The "iris" dataset is a classic dataset used throughout the data world in tutorials. The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+#| echo: false
+data(iris)
+head(iris)
+```
+
+## Histogram of Sepal Length by Species
+
+```{r}
+#| echo: false
+library(ggplot2)
+
+ggplot(iris, aes(x=Sepal.Length, fill=Species)) + 
+  geom_histogram(alpha=0.3, position="identity") +
+  ggtitle("Histogram of Sepal Length by Species")
+```
+
+## Interactive Histogram with Plotly
+
+There are many tools to make interactive visualizations with R. Shiny, highcharter, igraph, and plotly are among them. The below code adapts <https://plotly-r.com/bars-histograms.html> to the iris dataset.
+
+```{r}
+#| echo: false
+#install.packages("plotly")
+#| echo: false
+library(plotly)
+
+p1 <- plot_ly(iris, x = ~Sepal.Length) %>%
+  add_histogram(name = "plotly.js")
+
+sepal_hist_setosa <- function(method = "FD") {
+  h <- hist(iris$Sepal.Length[iris$Species=="setosa"], breaks = method, plot = FALSE)
+  plot_ly(x = h$mids, y = h$counts) %>% add_bars(name = "Setosa")
+}
+
+sepal_hist_versicolor <- function(method = "FD") {
+  h <- hist(iris$Sepal.Length[iris$Species=="versicolor"], breaks = method, plot = FALSE)
+  plot_ly(x = h$mids, y = h$counts) %>% add_bars(name = "Versicolor")
+}
+
+sepal_hist_virginica <- function(method = "FD") {
+  h <- hist(iris$Sepal.Length[iris$Species=="virginica"], breaks = method, plot = FALSE)
+  plot_ly(x = h$mids, y = h$counts) %>% add_bars(name = "Virginica")
+}
+
+fig1 <- subplot(
+  sepal_hist_setosa("Scott"), sepal_hist_versicolor("Scott"), sepal_hist_virginica("Scott"),
+  nrows = 3, shareX = TRUE
+) %>%
+  layout(title="Histograms of Sepal Length by Species, Iris Dataset")
+
+fig1
+```
+
+## Interactive Scatterplot with Plotly
+
+This code is from <https://plotly.com/r/figure-labels/>.
+
+```{r}
+fig2 <-  plot_ly(data = iris ,x =  ~Sepal.Length, y = ~Sepal.Width, color = ~Species, type = 'scatter', mode = 'markers')%>% layout(title = 'Automatic Labels Based on Data Frame Column Names', plot_bgcolor = "#e5ecf6")
+
+fig2
+```
