@@ -136,7 +136,7 @@ rcorr(gss$age, gss$realrinc)
 
 #There is a weak positive linear relationship between the two variables.
 
-
+#Lomas
 
 # Independent Samples T-Test ----------------------------------------------
 
